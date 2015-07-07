@@ -52,9 +52,9 @@ main(){
     // strcat_2(mc, end);
     // printf ("%s is disturbing \n", mc);
 
-    // try it this way, treating the string ointer as going to
-    // an immutable space in memory. So create a new memeory space
-    // for concat product
+    // try it this way, treating the string pointer as going to
+    // a new space in memory. (Like we treat immutable strings when
+    // concat in higher languages.)
     char result[10] = {};
     strcat_3(mc, end, result);
     printf ("%s is disturbing \n", result);
