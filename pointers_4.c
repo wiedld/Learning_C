@@ -6,20 +6,16 @@
 
 void *reverse_1 (void *base, int n, int elemSize, void(*swapFn) (void *, void *))
 {
-    void *output = malloc(elemSize * n);
-
-    for (int i = 0; i < n; i++){
+    for (int i = 0; i < (n/2); i++){
         // find pointer to each element in array
         // normalize pointer math
-        void *newElemIdx = (char *)output + i * elemSize;
+        void *newElemIdx = (char *)base + i * elemSize;
 
         void *oldElemIdx = (char *)base + (n -1 - i) * elemSize;
 
         // use swap function, dependent on elemSize;
         swapFn(newElemIdx, oldElemIdx);
     }
-
-    return output;
 }
 
 
@@ -33,9 +29,9 @@ void swapInt(int *ap, int *bp){
 
 // swap function for strings
 void swapChar(char *ap, char *bp){
-    // char temp = *ap;
+    char temp = *ap;
     *ap = *bp;
-    // *bp = temp;
+    *bp = temp;
 }
 
 
@@ -46,9 +42,9 @@ int main()
     int array[] = {4,2,3,7,11,6};
     int arraySize = 6;
 
-    int *result = reverse_1(array, arraySize, sizeof(int), swapInt);
+    reverse_1(array, arraySize, sizeof(int), swapInt);
     for (int idx = 0; idx < arraySize; idx++){
-        printf("%d ", result[idx]);
+        printf("%d ", array[idx]);
     }
     printf("\n");
 
@@ -56,10 +52,9 @@ int main()
     char goat[] = {'m','o','u','n','t','a','i','n',' ','g','o','a','t'};
     int str_size = 13;
 
-    char *result2 = reverse_1(goat, str_size, sizeof(char), swapChar);
-
+    reverse_1(goat, str_size, sizeof(char), swapChar);
     for (int idx = 0; idx < str_size; idx++){
-        printf("%c", result2[idx]);
+        printf("%c", goat[idx]);
     }
     printf("\n");
 
