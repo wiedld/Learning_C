@@ -32,7 +32,7 @@ int *findNL(char *str, int n)
     int i = 0;
     for (int pos = 0; pos < n; pos++){
         if (str[pos] == '\n'){
-            posIndeces[i] = pos;                 // heap mem can use this indexing
+            posIndeces[i] = pos;       // heap mem can use indexing
             i++;
         }
     }
@@ -43,28 +43,40 @@ int *findNL(char *str, int n)
 
 void *reverse_string_literal(char *text)
 {
-    int len = strLength(text);
+    int str_len = strLength(text);
 
-    // start with stack memory, size going to reassign name
-    char *output = malloc(sizeof(char) * (len + 1));
+    // make heap memory, so can pass pointer btwn functions
+    char *output = malloc(sizeof(char) * (str_len + 1));
 
+    // pointer gets set to heap memory, array of ints
     int *posIndeces;
-    posIndeces = findNL(text, len);
+    posIndeces = findNL(text, str_len);
 
-    // should be 43
-    printf("%d ", posIndeces[0]);
-    printf("%d \n", *posIndeces);
+    int j = 0;
+    int start = 0;
+    int end = posIndeces[j];
+    int len_posIdx = sizeof(posIndeces)/sizeof(posIndeces[0]);
 
-    for (int i = 0; i < len; i++){
-        output[(len-1)-i] = text[i];
+    for (int i = 0; i < str_len; i++){
+        // swap 1st line, up to \n char
+        output[end - i + start - 1] = text[i];
+        // once hit end of first row in paragraph
+        if (i == end - 1) {
+            output[start] = '\n';
+            j++;    // get index of next \n char
+            start = end;
+            end = posIndeces[j];
+            // if hit end of posIndeces of '\n'
+            if (j >= len_posIdx){
+                end = str_len;
+            }
+        }
     }
-    output[len] = '\0';
+    output[str_len] = '\0';
 
     // free heap memory
     free(posIndeces);
     posIndeces = NULL;
-
-    // convert output to heap memory, so can return
 
     return output;
 }
@@ -72,13 +84,13 @@ void *reverse_string_literal(char *text)
 
 int main(int argc, char *argv[])
 {
-    char *test = "A large amount of text all tested together \nand dealing with new line characters as a \ntest of handling conditions in a C program.";
+    char *test = "A large amount of text all tested together\nand dealing with new line characters as a\ntest of handling conditions in a C program.\n";
     char *output = reverse_string_literal(test);
 
-    printf("%s \n", output);
+
+    printf("%s", output);
 
     free(output);   // is heap memory
-
     return 0;
 }
 
