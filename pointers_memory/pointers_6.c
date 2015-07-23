@@ -35,6 +35,12 @@ int main()
     // pointer math, to get second value
     printf("*(array+1): %d \n\n", *(array+1) );
 
+    printf("Decaying the pointer: \n");
+    printf("size of array: %lu \n", sizeof(array));
+    int *newPointer;
+    newPointer = array;
+    printf("size of newPointer: %lu \n", sizeof(newPointer));
+
 
     return 0;
 }
