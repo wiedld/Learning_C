@@ -12,8 +12,18 @@
 //         - row (constant i)
 //         - column (contant j)
 //         - diagonala:
-//                - ascending.
-//                - descending.
+//                 - descending \
+//                         (0,0) = x - y = 0
+//                         (1,1) = x - y = 0
+//                         **are in same diagonol**
+//                         (1,0) = x - y = 1
+//                         (2,1) = x - y = 1
+//                 - ascending /
+//                         (0,3) = -y - x = -3
+//                         (1,2) = -y - x = -3
+//                         **are in same diagonol**
+//                         (2,3) = -y - x = -5
+//                         (3,2) = -y - x = -5
 // - how populate solution?
 //     - could be random insertion.
 //         > rand(0,7) inclusive.
@@ -39,8 +49,19 @@ int runTest(int **queens)
     int rowPos[] = {0,0,0,0,0,0,0,0};
     int colPos[] = {0,0,0,0,0,0,0,0};
 
+    // range of diagonal operations:
+    //     x - y can be -7:7
+    //         therefore use array pos 0:14, pos = (x-y)+7
+    //     -y - x can be 0:-14
+    //         therefore use array pos 0:14, pos = -1 * (-y-x)
+    int diaDesc[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    int diaAsc[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+
     int row;
     int col;
+    int diaD;
+    int diaA;
     // sum rows & columns
     for (int q = 0; q < 8; q++){
         row = queens[q][0];
@@ -48,8 +69,13 @@ int runTest(int **queens)
         rowPos[row] += 1;
         colPos[col] += 1;
 
+        diaD = (row - col) + 7;
+        diaA = ((col*-1) - row ) * -1;
+        diaDesc[diaD] += diaD;
+        diaAsc[diaA] += diaA;
+
         // check none are above 1
-        if (rowPos[row] > 1 || colPos[col] > 1){
+        if (rowPos[row] > 1 || colPos[col] > 1 || diaDesc[diaD] > 1 || diaAsc[diaA] > 1){
             return 0;   // False = failed.
         }
     }
@@ -97,3 +123,4 @@ int main()
         free(queens[q]);
     }
 }
+
