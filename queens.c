@@ -11,7 +11,7 @@
 //     - sum across:
 //         - row (constant i)
 //         - column (contant j)
-//         - diagonala:
+//         - diagonals:
 //                 - descending \
 //                         (0,0) = x - y = 0
 //                         (1,1) = x - y = 0
@@ -29,7 +29,7 @@
 //         > rand(0,7) inclusive.
 //     - could be diminishing options.
 //         > i = [0...7], 1 of each
-//         > j = [0...7], rand()
+//         > j = [0...7], each j should be unique
 //         > raster_map[i][j] = 1
 //         > then run check for passing test
 // - not sure if I'm suppose to get all possible solutions, or only first found. Start with first found.
@@ -57,7 +57,6 @@ int runTest(int **queens)
     int diaDesc[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     int diaAsc[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-
     int row;
     int col;
     int diaD;
@@ -71,8 +70,8 @@ int runTest(int **queens)
 
         diaD = (row - col) + 7;
         diaA = ((col*-1) - row ) * -1;
-        diaDesc[diaD] += diaD;
-        diaAsc[diaA] += diaA;
+        diaDesc[diaD] += 1;
+        diaAsc[diaA] += 1;
 
         // check none are above 1
         if (rowPos[row] > 1 || colPos[col] > 1 || diaDesc[diaD] > 1 || diaAsc[diaA] > 1){
@@ -89,13 +88,17 @@ int **makeQueensPos(int **queenPos)
     // queenPos[1] = 2nd queen, [1][0] = row#, [1][1] = col#
     // queenPos[2] = 3rd queen, [2][0] = row#, [2][1] = col#
 
-    // using 8 queens, each has unique row, choose random col
-    int row;    // make more explicit, what doing
+    // using 8 queens, each has unique row
+    // choose random col
+    int row;
     int col;
+
     for (int q = 0; q < 8; q++){
         queenPos[q] = malloc(sizeof(int) * 2);
+
         row = q;
         queenPos[q][0] = row;
+
         col = rand() % 8;
         queenPos[q][1] = col;
     }
