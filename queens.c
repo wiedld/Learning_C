@@ -1,4 +1,4 @@
-// OBJECTIVE:
+// OBJECTIVE #1:
 // put 8 queens on a chessboard so that none of them attack each other, that is to say, no two of them are in the same column, row or diagonal
 
 // CAVEAT:
@@ -34,14 +34,91 @@
 //         > then run check for passing test
 // - not sure if I'm suppose to get all possible solutions, or only first found. Start with first found.
 
-// OPTIMIZE:
+// ABSTRACT:
 // why do I need to build an entire raster map?
 // why not just have 8x2 array? 8 queens, the the 2 values are for i & j on the imaginary chessboard?
+
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+
+// OBJECTIVE #2;  find all solutions, excluding mirror images.
+
+// MIRRORS:
+// reflection across the x axis, or y axis
+//     - across y axis:
+//         (x,y) --> (max_x - z, y)
+//     - across x axis:
+//         (x,y) --> (x, max_Y - y)
+
+// HOW KNOW WHEN TO STOP?
+//     - before was stopping at first solution found
+//     - already trying all row permutations (loop 0->7)
+//     - need to try in combination with all possible col permutations.
+//     - recursive C.  oh-la-la. first attempt in C.
+//     - 8! possible col arrangements
+//     - 8! * 8 rows = 40320 * 8 = 322560
 
 
 
 #include <stdio.h>
 #include <stdlib.h>
+
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+// HELPER FUNCTIONS
+
+void swap(int *x, int *y)
+{
+    int temp;
+    temp = *x;
+    *x = *y;
+    *y = temp;
+}
+
+
+void permute(int *a, int l, int n, int **results, int *counter)
+{
+  int eaRes = counter[0];
+  int i;
+   if (l == (n-1)){
+      // alloc memory for num array, to add
+      results[eaRes] = malloc(sizeof(int) * n);
+      // add values
+      for (int id=0; id < n; id++){
+        results[eaRes][id] = a[id];
+      }
+      // indexing result array, with a counter being updated by
+      // all descendent recursive calls
+      counter[0] = counter[0] + 1;
+   } else {
+       for (i = l; i < n; i++)
+       {
+          swap((a+l), (a+i));
+          permute(a, l+1, n, results, counter);
+          swap((a+l), (a+i)); //backtrack
+       }
+   }
+}
+
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+int **makeQueensPos(int *colPos)
+{
+    // queenPos[0] = 1st queen, [0][0] = row#, [0][1] = col#
+    // queenPos[1] = 2nd queen, [1][0] = row#, [1][1] = col#
+    // queenPos[2] = 3rd queen, [2][0] = row#, [2][1] = col#
+    int **queenPos = malloc(sizeof(int *) * 8);
+    int row;
+    int col;
+
+    for (int i=0; i < 8; i++){
+        queenPos[i] = malloc(sizeof(int*) * 2);
+        queenPos[i][0] = i;
+        queenPos[i][1] = colPos[i];
+    }
+    return queenPos;
+}
 
 
 int runTest(int **queens)
@@ -82,48 +159,34 @@ int runTest(int **queens)
 }
 
 
-int **makeQueensPos(int **queenPos)
-{
-    // queenPos[0] = 1st queen, [0][0] = row#, [0][1] = col#
-    // queenPos[1] = 2nd queen, [1][0] = row#, [1][1] = col#
-    // queenPos[2] = 3rd queen, [2][0] = row#, [2][1] = col#
-
-    // using 8 queens, each has unique row
-    // choose random col
-    int row;
-    int col;
-
-    for (int q = 0; q < 8; q++){
-        queenPos[q] = malloc(sizeof(int) * 2);
-
-        row = q;
-        queenPos[q][0] = row;
-
-        col = rand() % 8;
-        queenPos[q][1] = col;
-    }
-    return queenPos;
-}
-
-
 int main()
 {
-    // multidimensional array. use heap memory
-        // (persist beyond function stack)
-    // 8 queens.
-    int **queens;
-    queens = malloc(sizeof(int *) * 8);
+    // get all possible permutations of col
+    int array[] = {0,1,2,3,4,5,6,7};
+    int n = 8;
+    int numPermu = 8*7*6*5*4*3*2;
+    int **colPermu = malloc(sizeof(int *) * numPermu);
+    int counter[] = {0};
+    permute(array, 0, n, colPermu, counter);
 
-    int outcome;
-    do {
-        queens = makeQueensPos(queens);
-        outcome = runTest(queens);
-    } while (outcome != 1);
-
-    // print each queen's position, and free up memory
-    for (int q = 0; q < 8; q++){
-        printf("Queen position: %d, %d \n", queens[q][0], queens[q][1]);
-        free(queens[q]);
+    // for each of these, match with row[1...7] and test
+    for (int poss = 0; poss < numPermu; poss++){
+        // make row, col, pair
+        int **possibleSoln = makeQueensPos(colPermu[poss]);
+        // check if valid
+        int success = runTest(possibleSoln);
+        if (success == 1){
+            printf(" \nSolution: ");
+        }
+        for (int q = 0; q < 8; q++){
+            if (success == 1){
+                printf("(%d, %d)  ", possibleSoln[q][0], possibleSoln[q][1]);
+            }
+            free(possibleSoln[q]);
+        }
+        free(possibleSoln);
     }
 }
+
+
 
