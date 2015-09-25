@@ -34,9 +34,16 @@
 //         > then run check for passing test
 // - not sure if I'm suppose to get all possible solutions, or only first found. Start with first found.
 
-// OPTIMIZE:
+// ABSTRACT:
 // why do I need to build an entire raster map?
 // why not just have 8x2 array? 8 queens, the the 2 values are for i & j on the imaginary chessboard?
+
+// MIRRORS:
+// reflection across the x axis, or y axis
+//     - across y axis:
+//         (x,y) --> (max_x - z, y)
+//     - across x axis:
+//         (x,y) --> (x, max_Y - y)
 
 
 
@@ -105,25 +112,47 @@ int **makeQueensPos(int **queenPos)
     return queenPos;
 }
 
+// 8! = 40320 possible col positions
+
+
+
+
+
+
+
+
+
+
+int **determineQueenLayouts()
+{
+    // int outcome;
+    // do {
+    //     queens = makeQueensPos(queens);
+    //     outcome = runTest(queens);
+    // } while (outcome != 1);
+
+
+
+    return queens;
+}
+
 
 int main()
 {
-    // multidimensional array. use heap memory
-        // (persist beyond function stack)
-    // 8 queens.
-    int **queens;
-    queens = malloc(sizeof(int *) * 8);
-
-    int outcome;
     do {
-        queens = makeQueensPos(queens);
-        outcome = runTest(queens);
+        // multidimensional array. use heap memory
+        // 8 queens.
+        int **possible_layout;
+        possible_layouts = malloc(sizeof(int *) * 8);
+        // get 1 solution which passes all test.
+        possible_layout = determineQueenLayout(possible_layout);
+        // free memory &
+        printf("Possible solution: ");
+        for (int q = 0; q < 8; q++){
+            printf("(%d, %d)  ", queens[q][0], queens[q][1]);
+            free(queens[q]);
+        }
+        printf("\n");
     } while (outcome != 1);
-
-    // print each queen's position, and free up memory
-    for (int q = 0; q < 8; q++){
-        printf("Queen position: %d, %d \n", queens[q][0], queens[q][1]);
-        free(queens[q]);
-    }
 }
 
