@@ -159,7 +159,6 @@ int runTest(int **queens)
 }
 
 
-// TODO: getting a failure at possibleOutcome 40024
 int main()
 {
     // get all possible permutations of col
