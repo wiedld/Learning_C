@@ -62,6 +62,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
@@ -100,6 +101,7 @@ void permute(int *a, int l, int n, int **results, int *counter)
    }
 }
 
+
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
 
@@ -123,6 +125,8 @@ int **makeQueensPos(int *colPos)
 
 int runTest(int **queens)
 {
+    // TEST #1 = QUEENS ARE ALL SAFE!
+
     int rowPos[] = {0,0,0,0,0,0,0,0};
     int colPos[] = {0,0,0,0,0,0,0,0};
 
@@ -155,11 +159,14 @@ int runTest(int **queens)
             return 0;   // False = failed.
         }
     }
+    // TEST #2 = removing any symmetries
+    // assuming that "symmetry" is a mirrored reflection
+
+
     return 1;   // True = success
 }
 
 
-// TODO: getting a failure at possibleOutcome 40024
 int main()
 {
     // get all possible permutations of col
@@ -170,12 +177,73 @@ int main()
     int counter[] = {0};
     permute(array, 0, n, colPermu, counter);
 
+    // place to store the winners
+    int ***winners;
+    int countWinners = 0;
+
     // for each of these, match with row[1...7] and test
     for (int poss = 0; poss < numPermu; poss++){
         // make row, col, pair
         int **possibleSoln = makeQueensPos(colPermu[poss]);
         // check if valid
         int success = runTest(possibleSoln);
+
+// WHAT trying to fix
+        // // what to do if successful
+        if (success == 1){
+            // if needed, make a larger winners -- copying (int **) pointers from the old winners
+            int numElemToCopy = sizeof(winners); // size in bytes
+            // int numElemToCopy = sizeof(winners)/sizeof(winners[0]);
+            printf("\nnumElemToCopy: %d", numElemToCopy);
+
+            // if (numElemToCopy > 0){
+            // if (4 == 3) {
+
+            int bitsToMove = numElemToCopy * sizeof(int **);
+
+            int ***temp = malloc(bitsToMove);
+            memcpy(temp, winners, bitsToMove);
+
+  printf("\nWINNER: (%p)\n", winners[0][0]);
+  printf("\tTEMP (%p),", temp[0][0]);
+  printf("\nWINNERS (%d, %d)", winners[0][0][0], winners[0][0][1]);
+  printf("\tTEMP(%d, %d),", temp[0][0][0], temp[0][0][1]);
+
+            // free(winners);
+
+    //         int ***winners =  malloc((numElemToCopy + 1) * sizeof(int **));
+    //         memcpy(winners, temp, bitsToMove);
+    //         memcpy(winners + numElemToCopy, &possibleSoln, sizeof(int**));
+
+
+    // printf("\nTEMP (%p),", temp[0][0]);
+    // printf("WINNER: (%p)\n", winners[0][0]);
+    // printf("WINNERS (%d, %d)", winners[0][0][0], winners[0][0][1]);
+
+
+
+
+
+
+
+            // printf("TEMP (%d, %d)", temp[0][0][0], temp[0][0][1]);
+            // int ***winners = temp;
+          // }
+          // copy newest winners to the end.
+            memcpy(winners, &possibleSoln, sizeof(int**));
+
+
+   // // does this work?
+   //        printf("\nrunning");
+   //        int ***test;
+   //        memcpy(test, &possibleSoln, sizeof(int**));
+
+   //        // memcpy(winners, possibleSoln, sizeof(int**) * (numElemToCopy+1));
+   //        printf("TEST (%d, %d)", winners[0][0][0], winners[0][0][1]);
+   //  ////////////
+        }
+
+///// trying to get rid of this
         if (success == 1){
             printf(" \nSolution: ");
         }
@@ -186,8 +254,22 @@ int main()
             free(possibleSoln[q]);
         }
         free(possibleSoln);
+/////////////////
     }
-}
 
+
+    // print winners, and free memory
+    int numSolutions = sizeof(winners);
+    printf(" %d\n", numSolutions);
+    for (int i = 0; i < numSolutions; i++){
+        printf(" \nSolution: ");
+        for (int q = 0; q < 8; q++){
+            // printf("(%d, %d)  ", winners[i][q][0], winners[i][q][1]);
+            // free(winners[i][q]);
+        }
+        // free(winners[i]);
+    }
+
+}
 
 
