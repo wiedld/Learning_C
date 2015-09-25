@@ -38,9 +38,9 @@ void permute(int *a, int l, int n, int **results, int *counter)
 
 int main()
 {
-    int array[] = {1,2,3,4};
-    int n = 4;
-    int numPermu = 24;
+    int array[] = {0,1,2,3,4,5,6,7};
+    int n = 8;
+    int numPermu = 8*7*6*5*4*3*2;
     int **outcome = malloc(sizeof(int *) * numPermu);
     int counter[] = {0};
 

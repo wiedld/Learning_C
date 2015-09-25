@@ -103,40 +103,19 @@ void permute(int *a, int l, int n, int **results, int *counter)
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
 
-int ***makeQueensPos()
+int **makeQueensPos(int *colPos)
 {
     // queenPos[0] = 1st queen, [0][0] = row#, [0][1] = col#
     // queenPos[1] = 2nd queen, [1][0] = row#, [1][1] = col#
     // queenPos[2] = 3rd queen, [2][0] = row#, [2][1] = col#
-
-    // using 8 queens, each has unique row (0...7)
-
-    // get all possible permutations of col
-    int array[] = {0,1,2,3,4,5,6,7};
-    int n = 8;
-    int numPermu = 40320;
-    int **colPermu = malloc(sizeof(int *) * numPermu);
-    int counter[] = {0};
-    permute(array, 0, n, colPermu, counter);
-
-    // make all possible row x col pairings.
-    int ***queenPos = malloc(sizeof(int *) * n * numPermu);
-
+    int **queenPos = malloc(sizeof(int *) * 8);
     int row;
     int col;
-    int q = 0;  // a single q = all 8 queens
-    for (int i=0; i < numPermu; i++){
-        // allot space for 8 (row,col) pairings.
-        queenPos[q] = malloc(sizeof(int*) * n);
-      for (int j=0; j < n; j++){
-        col = colPermu[i][j];
-        row = j;
-        queenPos[q][j] = malloc(sizeof(int) * 2);
-        queenPos[q][j][0] = row;
-        queenPos[q][j][1] = col;
-      }
-      free(colPermu[i]);    // free col permutation after use
-      q++;
+
+    for (int i=0; i < 8; i++){
+        queenPos[i] = malloc(sizeof(int*) * 2);
+        queenPos[i][0] = i;
+        queenPos[i][1] = colPos[i];
     }
     return queenPos;
 }
@@ -183,15 +162,20 @@ int runTest(int **queens)
 // TODO: getting a failure at possibleOutcome 40024
 int main()
 {
-    // get all possible solutions
-    int ***possibleOutcomes;
-    possibleOutcomes = makeQueensPos();
+    // get all possible permutations of col
+    int array[] = {0,1,2,3,4,5,6,7};
+    int n = 8;
+    int numPermu = 8*7*6*5*4*3*2;
+    int **colPermu = malloc(sizeof(int *) * numPermu);
+    int counter[] = {0};
+    permute(array, 0, n, colPermu, counter);
 
-    // print out those which pass the test
-    for (int poss = 0; poss < (40320*8); poss++){
-        int **possibleSoln = possibleOutcomes[poss];
-        int success = runTest(possibleOutcomes[poss]);
-
+    // for each of these, match with row[1...7] and test
+    for (int poss = 0; poss < numPermu; poss++){
+        // make row, col, pair
+        int **possibleSoln = makeQueensPos(colPermu[poss]);
+        // check if valid
+        int success = runTest(possibleSoln);
         if (success == 1){
             printf(" \nSolution: ");
         }
@@ -202,7 +186,6 @@ int main()
             free(possibleSoln[q]);
         }
         free(possibleSoln);
-        printf("COUNT %d", poss);
     }
 }
 
