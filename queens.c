@@ -119,7 +119,7 @@ void makeQueensPos(int **queensBoards)
 }
 
 
-int runTest(int **queens)
+int runTest(int *queens)
 {
     int rowPos[] = {0,0,0,0,0,0,0,0};
     int colPos[] = {0,0,0,0,0,0,0,0};
@@ -138,8 +138,8 @@ int runTest(int **queens)
     int diaA;
     // sum rows & columns
     for (int q = 0; q < 8; q++){
-        row = queens[q][0];
-        col = queens[q][1];
+        row = q;
+        col = queens[q];
         rowPos[row] += 1;
         colPos[col] += 1;
 
@@ -170,16 +170,13 @@ int main()
     // for each of these, test and print successful
     for (int poss = 0; poss < numPermu; poss++){
         // check if valid
-        // int success = runTest(possibleSoln);
-        // if (success == 1){
-        //     printf(" \nSolution: ");
-        // }
-        // for (int q = 0; q < 8; q++){
-        //     if (success == 1){
-        //         printf("(%d, %d)  ", possibleSoln[q][0], possibleSoln[q][1]);
-        //     }
-        //     free(possibleSoln[q]);
-        // }
+        int success = runTest(possibleSolns[poss]);
+        if (success == 1){
+            printf(" \nSolution: ");
+            for (int q = 0; q < 8; q++){
+                    printf("(%d, %d)  ", q, possibleSolns[poss][q]);
+            }
+        }
         free(possibleSolns[poss]);
     }
 }
