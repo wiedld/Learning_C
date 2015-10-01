@@ -1,5 +1,6 @@
 // OBJECTIVE #1:
-// put 8 queens on a chessboard so that none of them attack each other, that is to say, no two of them are in the same column, row or diagonal
+// put 8 queens on a chessboard so that none of them attack each other,
+// that is to say, no two of them are in the same column, row or diagonal
 
 // CAVEAT:
 // ignore symmetries (presumably meaning mirror images, along the x or y axis?)
@@ -32,7 +33,8 @@
 //         > j = [0...7], each j should be unique
 //         > raster_map[i][j] = 1
 //         > then run check for passing test
-// - not sure if I'm suppose to get all possible solutions, or only first found. Start with first found.
+// - not sure if I'm suppose to get all possible solutions, or only first found.
+//   Start with first found.
 
 // ABSTRACT:
 // why do I need to build an entire raster map?
@@ -103,21 +105,17 @@ void permute(int *a, int l, int n, int **results, int *counter)
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
 
-int **makeQueensPos(int *colPos)
+void makeQueensPos(int **queensBoards)
 {
-    // queenPos[0] = 1st queen, [0][0] = row#, [0][1] = col#
-    // queenPos[1] = 2nd queen, [1][0] = row#, [1][1] = col#
-    // queenPos[2] = 3rd queen, [2][0] = row#, [2][1] = col#
-    int **queenPos = malloc(sizeof(int *) * 8);
-    int row;
-    int col;
+    // each int *, points to an array indexed 0-->7 with:
+        // index = row #
+        // value = column #
+    int array[] = {0,1,2,3,4,5,6,7};
+    int n = 8;
 
-    for (int i=0; i < 8; i++){
-        queenPos[i] = malloc(sizeof(int*) * 2);
-        queenPos[i][0] = i;
-        queenPos[i][1] = colPos[i];
-    }
-    return queenPos;
+    // get all possible permutations of col
+    int counter[] = {0};
+    permute(array, 0, n, queensBoards, counter);
 }
 
 
@@ -161,30 +159,28 @@ int runTest(int **queens)
 
 int main()
 {
-    // get all possible permutations of col
-    int array[] = {0,1,2,3,4,5,6,7};
-    int n = 8;
+    // queens must be in a unique row, index 0-->7
+    // queens can be in any col, but each col must be unique
+    // therefore, get all possible permutations of 0-->7 array
     int numPermu = 8*7*6*5*4*3*2;
-    int **colPermu = malloc(sizeof(int *) * numPermu);
-    int counter[] = {0};
-    permute(array, 0, n, colPermu, counter);
 
-    // for each of these, match with row[1...7] and test
+    int **possibleSolns = malloc(sizeof(int *) * numPermu);
+    makeQueensPos(possibleSolns);
+
+    // for each of these, test and print successful
     for (int poss = 0; poss < numPermu; poss++){
-        // make row, col, pair
-        int **possibleSoln = makeQueensPos(colPermu[poss]);
         // check if valid
-        int success = runTest(possibleSoln);
-        if (success == 1){
-            printf(" \nSolution: ");
-        }
-        for (int q = 0; q < 8; q++){
-            if (success == 1){
-                printf("(%d, %d)  ", possibleSoln[q][0], possibleSoln[q][1]);
-            }
-            free(possibleSoln[q]);
-        }
-        free(possibleSoln);
+        // int success = runTest(possibleSoln);
+        // if (success == 1){
+        //     printf(" \nSolution: ");
+        // }
+        // for (int q = 0; q < 8; q++){
+        //     if (success == 1){
+        //         printf("(%d, %d)  ", possibleSoln[q][0], possibleSoln[q][1]);
+        //     }
+        //     free(possibleSoln[q]);
+        // }
+        free(possibleSolns[poss]);
     }
 }
 
