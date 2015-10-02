@@ -157,11 +157,42 @@ int runTest(int *queens)
 }
 
 
-int checkNotMirror(int *testingSoln, int **knownSolns)
+int checkNotMirror(int *testingSoln, int **knownSolns, int countSolns)
 {
+    // // flip across x axis. make y <-- max - y = 7 - y
+    int xMirror[8];
+    for (int i = 0; i < 8; i++){
+        xMirror[i] = 7 - testingSoln[i];
+    }
+    // // flip across y axis, make x = max - y. means flipping index positions.
+    int yMirror[8];
+    for (int i = 0; i < 4; i++){
+        int temp = testingSoln[i];
+        testingSoln[i] = testingSoln[7-i];
+        testingSoln[7-i] = temp;
+    }
+    // compare to known winners
+    for (int c = 0; c < countSolns; c++){
+        int xMatching = 0;
+        int xi = 0;
+        while (xMirror[xi]==knownSolns[c][xi]) {
+            xMatching++;
+            xi++;
+        }
+
+        int yMatching = 0;
+        int yi = 0;
+        while (yMirror[yi]==knownSolns[c][yi]) {
+            yMatching++;
+            yi++;
+        }
+
+        if (xMatching == 8 || xMatching == 8){
+            return 0;
+        }
+    }
     return 1;
 }
-
 
 
 int main()
@@ -176,14 +207,15 @@ int main()
 
     // for each of these, test and add to winners
     int **winners;
-    int countWinners = 0;     // 92
+    int countWinners = 0;
 
     for (int poss = 0; poss < numPermu; poss++){
         // check if valid
         int success = runTest(possibleSolns[poss]);
         if (success == 1){
             // see if not a mirror
-            int notMirror = checkNotMirror(possibleSolns[poss], winners);
+            // int notMirror = 1;
+            int notMirror = checkNotMirror(possibleSolns[poss], winners, countWinners);
             if (notMirror == 1){
                 // make space for new winner.
                 int **temp = malloc(sizeof(int *) * countWinners);
@@ -193,10 +225,10 @@ int main()
                 memcpy(winners+(countWinners), &possibleSolns[poss], sizeof(int *));
                 countWinners++;
             } else {
-                free(possibleSolns[poss]);
+                free(possibleSolns[poss]);  // has a mirror winner already
             }
-        }   // if success
-    }  //  for loop
+        }
+    }  //  end the for loop
 
     //  print result
     for (int i = 0; i < countWinners; i++){
@@ -206,5 +238,6 @@ int main()
             }
         free(winners[i]);
     }
+    printf("\nTOTAL NUMBER OF SOLUTIONS: %d \n", countWinners);
 }
 
