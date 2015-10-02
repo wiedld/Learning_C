@@ -169,9 +169,9 @@ int main()
     makeQueensPos(possibleSolns);
 
     // for each of these, test and add to winners
-    // int **winners;
-int **winners = malloc(sizeof(int *) * 92);
+    int **winners;
     int countWinners = 0;     // 92
+
     for (int poss = 0; poss < numPermu; poss++){
         // check if valid
         int success = runTest(possibleSolns[poss]);
@@ -181,10 +181,9 @@ int **winners = malloc(sizeof(int *) * 92);
   int notMirror = 1;
             if (notMirror == 1){
   //             // make space for new winner.
-                // int **temp = malloc(sizeof(int *) * countWinners);
-                // memcpy(temp, winners, countWinners * sizeof(int *) );
-  // free(winners);
-                // int **winners = temp;
+                int **temp = malloc(sizeof(int *) * countWinners);
+                memcpy(temp, winners, countWinners * sizeof(int *) );
+                winners = temp;
   //             // add new winner
                 memcpy(winners+(countWinners), &possibleSolns[poss], sizeof(int *));
                 countWinners++;
