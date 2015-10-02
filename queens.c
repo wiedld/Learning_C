@@ -81,9 +81,9 @@ void swap(int *x, int *y)
 
 void permute(int *a, int l, int n, int **results, int *counter)
 {
-  int eaRes = counter[0];
-  int i;
-   if (l == (n-1)){
+    int eaRes = counter[0];
+    int i;
+    if (l == (n-1)){
       // alloc memory for num array, to add
       results[eaRes] = malloc(sizeof(int) * n);
       // add values
@@ -93,14 +93,13 @@ void permute(int *a, int l, int n, int **results, int *counter)
       // indexing result array, with a counter being updated by
       // all descendent recursive calls
       counter[0] = counter[0] + 1;
-   } else {
-       for (i = l; i < n; i++)
-       {
+    } else {
+        for (i = l; i < n; i++){
           swap((a+l), (a+i));
           permute(a, l+1, n, results, counter);
           swap((a+l), (a+i)); //backtrack
-       }
-   }
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////
@@ -158,6 +157,13 @@ int runTest(int *queens)
 }
 
 
+int checkNotMirror(int *testingSoln, int **knownSolns)
+{
+    return 1;
+}
+
+
+
 int main()
 {
     // queens must be in a unique row, index 0-->7
@@ -177,14 +183,13 @@ int main()
         int success = runTest(possibleSolns[poss]);
         if (success == 1){
             // see if not a mirror
-            // int notMirror = checkNotMirror(possibleSolns[poss], winners);
-  int notMirror = 1;
+            int notMirror = checkNotMirror(possibleSolns[poss], winners);
             if (notMirror == 1){
-  //             // make space for new winner.
+                // make space for new winner.
                 int **temp = malloc(sizeof(int *) * countWinners);
                 memcpy(temp, winners, countWinners * sizeof(int *) );
                 winners = temp;
-  //             // add new winner
+                // add new winner
                 memcpy(winners+(countWinners), &possibleSolns[poss], sizeof(int *));
                 countWinners++;
             } else {
@@ -192,15 +197,6 @@ int main()
             }
         }   // if success
     }  //  for loop
-
-printf("%d winners \n", countWinners);
-
-
-
-    // check for mirrors
-      // could do when creating the permutations, but could be very messy
-      // instead, wait until smaller data set, e.g. winners, then remove mirrors
-
 
     //  print result
     for (int i = 0; i < countWinners; i++){
@@ -211,6 +207,4 @@ printf("%d winners \n", countWinners);
         free(winners[i]);
     }
 }
-
-
 
