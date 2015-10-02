@@ -52,7 +52,7 @@
 //     - across x axis:
 //         (x,y) --> (x, max_Y - y)
 
-// HOW KNOW WHEN TO STOP?
+// HOW KNOW WHEN TO STOP:
 //     - before was stopping at first solution found
 //     - already trying all row permutations (loop 0->7)
 //     - need to try in combination with all possible col permutations.
@@ -64,6 +64,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
@@ -167,17 +168,48 @@ int main()
     int **possibleSolns = malloc(sizeof(int *) * numPermu);
     makeQueensPos(possibleSolns);
 
-    // for each of these, test and print successful
+    // for each of these, test and add to winners
+    // int **winners;
+int **winners = malloc(sizeof(int *) * 92);
+    int countWinners = 0;     // 92
     for (int poss = 0; poss < numPermu; poss++){
         // check if valid
         int success = runTest(possibleSolns[poss]);
         if (success == 1){
-            printf(" \nSolution: ");
-            for (int q = 0; q < 8; q++){
-                    printf("(%d, %d)  ", q, possibleSolns[poss][q]);
+            // see if not a mirror
+            // int notMirror = checkNotMirror(possibleSolns[poss], winners);
+  int notMirror = 1;
+            if (notMirror == 1){
+  //             // make space for new winner.
+                // int **temp = malloc(sizeof(int *) * countWinners);
+                // memcpy(temp, winners, countWinners * sizeof(int *) );
+  // free(winners);
+                // int **winners = temp;
+  //             // add new winner
+                memcpy(winners+(countWinners), &possibleSolns[poss], sizeof(int *));
+                countWinners++;
+            } else {
+                free(possibleSolns[poss]);
             }
-        }
-        free(possibleSolns[poss]);
+        }   // if success
+    }  //  for loop
+
+printf("%d winners \n", countWinners);
+
+
+
+    // check for mirrors
+      // could do when creating the permutations, but could be very messy
+      // instead, wait until smaller data set, e.g. winners, then remove mirrors
+
+
+    //  print result
+    for (int i = 0; i < countWinners; i++){
+        printf(" \nSolution: ");
+            for (int q = 0; q < 8; q++){
+                printf("(%d, %d)  ", q, winners[i][q]);
+            }
+        free(winners[i]);
     }
 }
 
